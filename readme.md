@@ -1,5 +1,7 @@
 # Set up a virtual webcam to use in Zoom, etc
 
+Adapted from: <https://superuser.com/questions/411897/using-desktop-as-fake-webcam-on-linux>
+
 1. <https://github.com/umlaeute/v4l2loopback/>
     1. Clone
     2. `make && sudo make install`
@@ -12,12 +14,14 @@
     - Scale has to be 1280x720. Your input scale (`-s`) can be lower, so long as the scale filter is added (as it is in the example command)
     - You can stream a specific part of your screen by using `slop` like so: `ffmpeg -f x11grab -r 15 $(slop -f '-video_size %wx%h -i +%x,%y') -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 -vf hflip,scale=1280x720 /dev/video2`
 
-## References
-
-- <https://superuser.com/questions/411897/using-desktop-as-fake-webcam-on-linux>
 
 ## Gifs
 
 ![](gifs/druid.gif)
 
 ![](gifs/buffalo.gif)
+
+## Notes
+
+- If the face tracking is slowing the computer down, can switch to a more lightweight model: <https://github.com/jeeliz/jeelizFaceFilter/#changing-the-neural-network>
+    - Right now I'm using the model that supports expression detection (for eyebrows), but it's really not necessary

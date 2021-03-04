@@ -19,10 +19,10 @@ const masks = {
 };
 
 const BACKGROUNDS = [
-  'forest_01.jpg',
-  'tavern_01.jpg',
-  'warehouse_01.jpg',
-  '#D93025'
+  '/assets/backgrounds/forest_01.jpg',
+  '/assets/backgrounds/tavern_01.jpg',
+  '/assets/backgrounds/warehouse_01.jpg',
+  'linear-gradient(180deg, rgba(255,79,54,1) 0%, rgba(255,98,53,1) 35%, rgba(255,0,0,1) 100%)',
 ];
 const background = new Background('#background', BACKGROUNDS);
 

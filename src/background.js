@@ -16,11 +16,11 @@ class Background {
 
   set() {
     let bg = this.imagePaths[this.index];
-    if (bg.startsWith('#')) {
-      this.element.style.backgroundImage = 'none';
-      this.element.style.backgroundColor = bg;
+    if (bg.startsWith('/') || bg.startsWith('http')) {
+      this.element.style.backgroundImage = `url(${bg})`;
     } else {
-      this.element.style.backgroundImage = `url(assets/backgrounds/${bg})`;
+      this.element.style.backgroundImage = 'none';
+      this.element.style.background = bg;
     }
   }
 }

@@ -11,24 +11,23 @@ class Mask {
 
   load(parent, onLoad) {
     LOADER.load(this.gltfUrl, (gltf) => {
-      console.log(`loaded: ${this.gltfUrl}`);
       let obj = gltf.scene;
       obj.scale.set(0.2, 0.2, 0.2);
-      // obj.children.forEach((child) => {
-      //   if (child.material) {
-      //     child.material.color = {
-      //       r: 2,
-      //       g: 2,
-      //       b: 2
-      //     };
-      //   }
-      // });
+      obj.children.forEach((child) => {
+        if (child.material) {
+          child.material.color = {
+            r: 2,
+            g: 2,
+            b: 2
+          };
+        }
+      });
 
       this.obj = obj;
-      // this.mixer = new THREE.AnimationMixer(obj);
-      // this.actions = gltf.animations.map((anim) => this.mixer.clipAction(anim));
+      this.mixer = new THREE.AnimationMixer(obj);
+      this.actions = gltf.animations.map((anim) => this.mixer.clipAction(anim));
 
-      // parent.add(obj);
+      parent.add(obj);
       onLoad(this);
       this.loaded = true;
     });

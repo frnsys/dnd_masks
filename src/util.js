@@ -7,4 +7,4 @@ function standardNormal() {
     return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
 }
 
-export default {standardNormal};
+export {standardNormal};

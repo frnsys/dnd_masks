@@ -16,7 +16,7 @@ class Tracker {
       },
       onResize: () => {
         if (this.threeCamera) {
-            JeelizThreeHelper.update_camera(this.threeCamera);
+          JeelizThreeHelper.update_camera(this.threeCamera);
         }
       }
     })

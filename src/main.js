@@ -30,8 +30,13 @@ function setupMasks(faceObj) {
       let eyebrow = new THREE.Mesh(geom, mat);
       eyebrow.position.setZ(1).setX(offset);
       mask.add(eyebrow);
-      window.eyebrow = eyebrow;
       return eyebrow;
+    });
+
+
+    let leafActions = mask.actions;
+    leafActions.forEach((action) => {
+      action.play();
     });
   });
 
@@ -76,6 +81,7 @@ function updateMasks(expressions) {
     });
 
     masks.buffalo.mixer.update(delta);
+    masks.druid.mixer.update(delta);
   }
 }
 
@@ -93,6 +99,9 @@ tracker.start();
 document.addEventListener('keydown', (ev) => {
   if (ev.key == 'k') {
     background.next();
+  } else if (ev.key == 'd') {
+    let webcamCanvas = document.getElementById('webcam-canvas');
+    webcamCanvas.style.display = webcamCanvas.style.display == 'none' ? 'block' : 'none';
   } else if (ev.key == 'f') {
     document.body.requestFullscreen();
   } else if (ev.key == 'j') {

@@ -41,6 +41,17 @@ function setupMasks(faceObj) {
     });
 
 
+    // "Smiling" eyebrows
+    const smileGeom = new THREE.TorusGeometry(0.75, 0.1, 8, 16, 3);
+    mask.eyebrows.push(...offsets.map((offset) => {
+      let eyebrow = new THREE.Mesh(smileGeom, mat);
+      eyebrow.position.setZ(1).setX(offset);
+      eyebrow.visible = false;
+      mask.add(eyebrow);
+      return eyebrow;
+    }));
+
+
     let leafActions = mask.actions;
     leafActions.forEach((action) => {
       action.play();
@@ -79,13 +90,20 @@ function setupMasks(faceObj) {
 // look here, and also look in the model load callbacks,
 // as those also don't seem to log errors
 function updateMasks(expressions) {
-  let {eyebrowFrown, eyebrowRaised} = expressions;
+  let {eyebrowFrown, eyebrowRaised, mouthSmile} = expressions;
   let delta = clock.getDelta();
   if (masks.druid.loaded && masks.buffalo.loaded) {
     const yEyeBrows = ( eyebrowFrown > eyebrowRaised ) ? -0.2 * eyebrowFrown : 0.7 * eyebrowRaised;
     masks.druid.eyebrows.forEach((mesh) => {
       mesh.position.setY(2.5 + yEyeBrows * 8);
     });
+    if (mouthSmile >= 0.001) {
+      masks.druid.eyebrows.slice(0, 2).forEach((mesh) => mesh.visible = false);
+      masks.druid.eyebrows.slice(2).forEach((mesh) => mesh.visible = true);
+    } else {
+      masks.druid.eyebrows.slice(0, 2).forEach((mesh) => mesh.visible = true);
+      masks.druid.eyebrows.slice(2).forEach((mesh) => mesh.visible = false);
+    }
 
     masks.buffalo.mixer.update(delta);
     masks.druid.mixer.update(delta);

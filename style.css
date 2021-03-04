@@ -51,7 +51,7 @@ body {
   color: #fff;
   background: rgba(0,0,0,0.2);
   padding: 1em;
-  min-height: 100vh;
+  height: 100vh;
   overflow-y: auto;
   font-size: 0.8em;
   font-family: monospace;

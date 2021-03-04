@@ -18,6 +18,6 @@
 
 ## Gifs
 
-![](https://d2w9rnfcy7mm78.cloudfront.net/11021887/original_93a1ead25b577c3e69ee36081d09864d.gif?1614825337?bc=0)
+![](gifs/druid.gif)
 
-![](https://d2w9rnfcy7mm78.cloudfront.net/11023624/original_2ef5f3ed2d5e26a8d289f16379a131a1.gif?1614834857?bc=0)
+![](gifs/buffalo.gif)

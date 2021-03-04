@@ -4,15 +4,16 @@ import GLTFLoader from './gltf';
 const LOADER = new GLTFLoader();
 
 class Mask {
-  constructor(gltfUrl) {
+  constructor(gltfUrl, scale) {
     this.loaded = false;
     this.gltfUrl = gltfUrl;
+    this.scale = scale;
   }
 
   load(parent, onLoad) {
     LOADER.load(this.gltfUrl, (gltf) => {
       let obj = gltf.scene;
-      obj.scale.set(0.2, 0.2, 0.2);
+      obj.scale.set(this.scale, this.scale, this.scale);
       obj.children.forEach((child) => {
         if (child.material) {
           child.material.color = {

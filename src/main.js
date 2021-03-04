@@ -7,8 +7,8 @@ import {standardNormal} from './util';
 
 const clock = new THREE.Clock();
 const masks = {
-  druid: new Mask('/assets/models/mask.gltf'),
-  buffalo: new Mask('/assets/models/water_buffalo.gltf'),
+  druid: new Mask('/assets/models/mask.gltf', 0.2),
+  buffalo: new Mask('/assets/models/water_buffalo.gltf', 0.35),
 };
 
 const BACKGROUNDS = [
@@ -16,27 +16,27 @@ const BACKGROUNDS = [
   'tavern_01.jpg',
   'warehouse_01.jpg'
 ];
-// const background = new Background('#background', BACKGROUNDS);
+const background = new Background('#background', BACKGROUNDS);
 
 function setupMasks(faceObj) {
   masks.druid.load(faceObj, (mask) => {
     // Eyebrows
-    let geom = new THREE.BoxGeometry(0.4, 0.05, 0.1);
+    let geom = new THREE.BoxGeometry(1.5, 0.25, 0.5);
     let mat = new THREE.MeshBasicMaterial({
-      // color: 0x000000
-      color: 0xff0000
+      color: 0x110A07
     });
-    let offsets = [-0.23, 0.23];
+    let offsets = [-1, 1];
     mask.eyebrows = offsets.map((offset) => {
       let eyebrow = new THREE.Mesh(geom, mat);
-      eyebrow.position.setZ(0.15).setY(0.5).setX(offset);
+      eyebrow.position.setZ(1).setX(offset);
       mask.add(eyebrow);
+      window.eyebrow = eyebrow;
       return eyebrow;
     });
   });
 
   masks.buffalo.load(faceObj, (mask) => {
-    // mask.visible = false;
+    mask.visible = false;
 
     // Blinking
     let blinkActions = mask.actions.slice(0, 2);
@@ -72,7 +72,7 @@ function updateMasks(expressions) {
   if (masks.druid.loaded && masks.buffalo.loaded) {
     const yEyeBrows = ( eyebrowFrown > eyebrowRaised ) ? -0.2 * eyebrowFrown : 0.7 * eyebrowRaised;
     masks.druid.eyebrows.forEach((mesh) => {
-      mesh.position.setY(0.5 + yEyeBrows);
+      mesh.position.setY(2.5 + yEyeBrows * 8);
     });
 
     masks.buffalo.mixer.update(delta);

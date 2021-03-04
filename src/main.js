@@ -21,7 +21,8 @@ const masks = {
 const BACKGROUNDS = [
   'forest_01.jpg',
   'tavern_01.jpg',
-  'warehouse_01.jpg'
+  'warehouse_01.jpg',
+  '#D93025'
 ];
 const background = new Background('#background', BACKGROUNDS);
 

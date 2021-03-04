@@ -16,7 +16,12 @@ class Background {
 
   set() {
     let bg = this.imagePaths[this.index];
-    this.element.style.backgroundImage = `url(assets/backgrounds/${bg})`;
+    if (bg.startsWith('#')) {
+      this.element.style.backgroundImage = 'none';
+      this.element.style.backgroundColor = bg;
+    } else {
+      this.element.style.backgroundImage = `url(assets/backgrounds/${bg})`;
+    }
   }
 }
 

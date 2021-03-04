@@ -42,3 +42,19 @@ body {
   max-height: 100%;
   max-width: 100%;
 }
+
+#logs {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 360px;
+  color: #fff;
+  background: rgba(0,0,0,0.2);
+  padding: 1em;
+  min-height: 100vh;
+  overflow-y: auto;
+  font-size: 0.8em;
+  font-family: monospace;
+  z-index: 12;
+  display: none;
+}

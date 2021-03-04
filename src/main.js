@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import Mask from './mask';
+import Logger from './logger';
 import Tracker from './tracker';
 import detectAudio from './audio';
 import Background from './background';
@@ -7,8 +8,14 @@ import {standardNormal} from './util';
 
 const clock = new THREE.Clock();
 const masks = {
-  druid: new Mask('/assets/models/mask.gltf', 0.2),
-  buffalo: new Mask('/assets/models/water_buffalo.gltf', 0.35),
+  druid: new Mask('/assets/models/mask.gltf', {
+    scale: 0.15,
+    emission: 2
+  }),
+  buffalo: new Mask('/assets/models/water_buffalo.gltf', {
+    scale: 0.17,
+    emission: 3
+  }),
 };
 
 const BACKGROUNDS = [
@@ -21,7 +28,7 @@ const background = new Background('#background', BACKGROUNDS);
 function setupMasks(faceObj) {
   masks.druid.load(faceObj, (mask) => {
     // Eyebrows
-    let geom = new THREE.BoxGeometry(1.5, 0.25, 0.5);
+    let geom = new THREE.BoxGeometry(1.5, 0.15, 0.5);
     let mat = new THREE.MeshBasicMaterial({
       color: 0x110A07
     });
@@ -53,7 +60,7 @@ function setupMasks(faceObj) {
     mask.mixer.addEventListener('finished', () => {
       blinksFinished++;
       if (blinksFinished >= 2) {
-        let timeout = Math.max(2000, 5000 + standardNormal() * 5000);
+        let timeout = Math.max(2000, 4000 + standardNormal() * 5000);
         setTimeout(() => {
           blinkActions.forEach((action) => {
             action.reset();
@@ -95,16 +102,23 @@ const tracker = new Tracker({
 });
 tracker.start();
 
+// Logger for debugging
+const logger = new Logger('#logs');
+
 // Keybindings/controls
-document.addEventListener('keydown', (ev) => {
-  if (ev.key == 'k') {
-    background.next();
-  } else if (ev.key == 'd') {
+const bindings = {
+  'k': () => background.next(),
+  'd': () => {
     let webcamCanvas = document.getElementById('webcam-canvas');
     webcamCanvas.style.display = webcamCanvas.style.display == 'none' ? 'block' : 'none';
-  } else if (ev.key == 'f') {
+  },
+  'f': () => {
     document.body.requestFullscreen();
-  } else if (ev.key == 'j') {
+  },
+  'l': () => {
+    logger.toggle();
+  },
+  'j': () => {
     if (masks.druid.loaded && masks.buffalo.loaded) {
       if (masks.druid.visible) {
         masks.buffalo.visible = true;
@@ -115,6 +129,9 @@ document.addEventListener('keydown', (ev) => {
       }
     }
   }
+}
+document.addEventListener('keydown', (ev) => {
+  if (ev.key in bindings) bindings[ev.key]();
 });
 
 // Volume indicator

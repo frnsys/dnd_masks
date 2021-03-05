@@ -46,18 +46,32 @@ const background = new Background('#background', BACKGROUNDS);
 
 function setupMasks(faceObj) {
   masks.face.load(faceObj, (mask) => {
-    let eyebrows = mask.obj.children.find((ch) => ch.name == 'Eyebrows');
+    let eyebrows = mask.obj.children.filter((ch) => ch.name.startsWith('Eyebrows'));
     mask.eyebrows = eyebrows;
 
-    let blinkAction = mask.actions[0];
-    blinkAction.setLoop(THREE.LoopOnce);
-    blinkAction.play();
+    mask.nonSmile = mask.obj.children.filter((ch) => ch.name.endsWith('Regular'));
+    mask.smile = mask.obj.children.filter((ch) => ch.name.endsWith('Smile'));
+    mask.smile.forEach((mesh) => mesh.visible = false);
+
+    // Blinking
+    let blinkActions = mask.actions.slice(0, 2);
+    blinkActions.forEach((action) => {
+      action.setLoop(THREE.LoopOnce);
+      action.play();
+    });
+    let blinksFinished = 0;
     mask.mixer.addEventListener('finished', () => {
-      let timeout = Math.max(2000, 4000 + standardNormal() * 5000);
-      setTimeout(() => {
-        blinkAction.reset();
-        blinkAction.play();
-      }, timeout);
+      blinksFinished++;
+      if (blinksFinished >= 2) {
+        let timeout = Math.max(2000, 4000 + standardNormal() * 5000);
+        setTimeout(() => {
+          blinkActions.forEach((action) => {
+            action.reset();
+            action.play();
+          });
+        }, timeout);
+        blinksFinished = 0;
+      }
     });
   });
 
@@ -136,13 +150,19 @@ function updateMasks(expressions) {
     masks.druid.eyebrows.forEach((mesh) => {
       mesh.position.setY(2.5 + yEyeBrows * 8);
     });
-    masks.face.eyebrows.position.setY(yEyeBrows * 4);
+    masks.face.eyebrows.forEach((mesh) => {
+      mesh.position.setY(yEyeBrows * 4);
+    });
     if (mouthSmile >= 0.001) {
       masks.druid.eyebrows.slice(0, 2).forEach((mesh) => mesh.visible = false);
       masks.druid.eyebrows.slice(2).forEach((mesh) => mesh.visible = true);
+      masks.face.smile.forEach((mesh) => mesh.visible = true);
+      masks.face.nonSmile.forEach((mesh) => mesh.visible = false);
     } else {
       masks.druid.eyebrows.slice(0, 2).forEach((mesh) => mesh.visible = true);
       masks.druid.eyebrows.slice(2).forEach((mesh) => mesh.visible = false);
+      masks.face.smile.forEach((mesh) => mesh.visible = false);
+      masks.face.nonSmile.forEach((mesh) => mesh.visible = true);
     }
 
     Object.values(masks).forEach((m) => m.mixer.update(delta));

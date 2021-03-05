@@ -24,7 +24,7 @@ const masks = {
 };
 const halo = new Halo({
   n: 8,
-  y: 0.7,
+  y: 0.5,
   radius: 0.75,
   size: 0.15,
   opacity: 0.5,
@@ -32,6 +32,7 @@ const halo = new Halo({
     '#ff0000',
     '#f5d142',
     '#6785f0',
+    '#3DAE62'
   ],
   rotationStep: 0.05
 });
@@ -168,7 +169,7 @@ function updateMasks(expressions) {
     Object.values(masks).forEach((m) => m.mixer.update(delta));
 
     halo.group.scale.set(1, 1 + mouthOpen * 2, 1);
-    // halo.group.position.setY(halo.opts.y - (mouthOpen *2));
+    halo.group.position.setY(halo.opts.y - mouthOpen);
     halo.update();
   }
 }

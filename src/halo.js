@@ -59,7 +59,7 @@ class Halo {
   update() {
     this.group.rotation.y += this.opts.rotationStep;
 
-    this.colorIndex += 0.001;
+    this.colorIndex += 0.0025;
     this.geom.faces.forEach((face, i) => {
       face.vertexColors[0] = new THREE.Color(this.colormap(this.colorIndex % 2));
       face.vertexColors[1] = new THREE.Color(this.colormap((this.colorIndex + 0.5) % 2));

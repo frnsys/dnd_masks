@@ -58,3 +58,15 @@ body {
   z-index: 12;
   display: none;
 }
+
+#loading {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #fff;
+  font-family: monospace;
+  padding: 1em;
+  z-index: 20;
+}

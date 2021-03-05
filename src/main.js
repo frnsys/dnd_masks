@@ -147,6 +147,8 @@ function updateMasks(expressions) {
   let {eyebrowFrown, eyebrowRaised, mouthSmile, mouthOpen} = expressions;
   let delta = clock.getDelta();
   if (Object.values(masks).every((m) => m.loaded)) {
+    document.getElementById('loading').style.display = 'none';
+
     const yEyeBrows = ( eyebrowFrown > eyebrowRaised ) ? -0.2 * eyebrowFrown : 0.7 * eyebrowRaised;
     masks.druid.eyebrows.forEach((mesh) => {
       mesh.position.setY(2.5 + yEyeBrows * 8);

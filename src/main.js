@@ -17,6 +17,10 @@ const masks = {
     scale: 0.17,
     emission: 3
   }),
+  face: new Mask('/assets/models/face.gltf', {
+    scale: 0.17,
+    emission: 2
+  })
 };
 const halo = new Halo({
   n: 8,
@@ -41,7 +45,25 @@ const BACKGROUNDS = [
 const background = new Background('#background', BACKGROUNDS);
 
 function setupMasks(faceObj) {
+  masks.face.load(faceObj, (mask) => {
+    let eyebrows = mask.obj.children.find((ch) => ch.name == 'Eyebrows');
+    mask.eyebrows = eyebrows;
+
+    let blinkAction = mask.actions[0];
+    blinkAction.setLoop(THREE.LoopOnce);
+    blinkAction.play();
+    mask.mixer.addEventListener('finished', () => {
+      let timeout = Math.max(2000, 4000 + standardNormal() * 5000);
+      setTimeout(() => {
+        blinkAction.reset();
+        blinkAction.play();
+      }, timeout);
+    });
+  });
+
   masks.druid.load(faceObj, (mask) => {
+    mask.visible = false;
+
     // Eyebrows
     let geom = new THREE.BoxGeometry(1.5, 0.15, 0.5);
     let mat = new THREE.MeshBasicMaterial({
@@ -109,11 +131,12 @@ function setupMasks(faceObj) {
 function updateMasks(expressions) {
   let {eyebrowFrown, eyebrowRaised, mouthSmile, mouthOpen} = expressions;
   let delta = clock.getDelta();
-  if (masks.druid.loaded && masks.buffalo.loaded) {
+  if (Object.values(masks).every((m) => m.loaded)) {
     const yEyeBrows = ( eyebrowFrown > eyebrowRaised ) ? -0.2 * eyebrowFrown : 0.7 * eyebrowRaised;
     masks.druid.eyebrows.forEach((mesh) => {
       mesh.position.setY(2.5 + yEyeBrows * 8);
     });
+    masks.face.eyebrows.position.setY(yEyeBrows * 4);
     if (mouthSmile >= 0.001) {
       masks.druid.eyebrows.slice(0, 2).forEach((mesh) => mesh.visible = false);
       masks.druid.eyebrows.slice(2).forEach((mesh) => mesh.visible = true);
@@ -122,8 +145,7 @@ function updateMasks(expressions) {
       masks.druid.eyebrows.slice(2).forEach((mesh) => mesh.visible = false);
     }
 
-    masks.buffalo.mixer.update(delta);
-    masks.druid.mixer.update(delta);
+    Object.values(masks).forEach((m) => m.mixer.update(delta));
 
     halo.group.scale.set(1, 1 + mouthOpen * 2, 1);
     // halo.group.position.setY(halo.opts.y - (mouthOpen *2));
@@ -160,15 +182,23 @@ const bindings = {
   'c': () => {
     halo.toggle();
   },
-  'j': () => {
-    if (masks.druid.loaded && masks.buffalo.loaded) {
-      if (masks.druid.visible) {
-        masks.buffalo.visible = true;
-        masks.druid.visible = false;
-      } else {
-        masks.druid.visible = true;
-        masks.buffalo.visible = false;
-      }
+
+  'm': () => {
+    if (Object.values(masks).every((m) => m.loaded)) {
+      Object.values(masks).forEach((m) => m.visible = false);
+      masks.druid.visible = true;
+    }
+  },
+  'w': () => {
+    if (Object.values(masks).every((m) => m.loaded)) {
+      Object.values(masks).forEach((m) => m.visible = false);
+      masks.buffalo.visible = true;
+    }
+  },
+  't': () => {
+    if (Object.values(masks).every((m) => m.loaded)) {
+      Object.values(masks).forEach((m) => m.visible = false);
+      masks.face.visible = true;
     }
   }
 }

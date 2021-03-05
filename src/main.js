@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import Halo from './halo';
 import Mask from './mask';
 import Logger from './logger';
 import Tracker from './tracker';
@@ -17,6 +18,19 @@ const masks = {
     emission: 3
   }),
 };
+const halo = new Halo({
+  n: 8,
+  y: 0.9,
+  radius: 0.75,
+  size: 0.15,
+  opacity: 0.5,
+  colors: [
+    '#ff0000',
+    '#f5d142',
+    '#6785f0',
+  ],
+  rotationStep: 0.05
+});
 
 const BACKGROUNDS = [
   '/assets/backgrounds/forest_01.jpg',
@@ -40,7 +54,6 @@ function setupMasks(faceObj) {
       mask.add(eyebrow);
       return eyebrow;
     });
-
 
     // "Smiling" eyebrows
     const smileGeom = new THREE.TorusGeometry(0.75, 0.1, 8, 16, 3);
@@ -83,6 +96,9 @@ function setupMasks(faceObj) {
       }
     });
   });
+
+  halo.hide();
+  faceObj.add(halo.group);
 }
 
 // NOTE if there's an error in here,
@@ -108,6 +124,8 @@ function updateMasks(expressions) {
 
     masks.buffalo.mixer.update(delta);
     masks.druid.mixer.update(delta);
+
+    halo.update();
   }
 }
 
@@ -136,6 +154,9 @@ const bindings = {
   },
   'l': () => {
     logger.toggle();
+  },
+  'c': () => {
+    halo.toggle();
   },
   'j': () => {
     if (masks.druid.loaded && masks.buffalo.loaded) {

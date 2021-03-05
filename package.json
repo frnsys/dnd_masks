@@ -5,6 +5,7 @@
     "start": "webpack-dev-server --watch --progress --mode=development"
   },
   "dependencies": {
+    "color-interpolate": "^1.0.5",
     "facefilter": "^2.1.2",
     "three": "^0.118.3"
   },

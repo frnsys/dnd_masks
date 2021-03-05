@@ -20,7 +20,7 @@ const masks = {
 };
 const halo = new Halo({
   n: 8,
-  y: 0.9,
+  y: 0.7,
   radius: 0.75,
   size: 0.15,
   opacity: 0.5,
@@ -107,7 +107,7 @@ function setupMasks(faceObj) {
 // look here, and also look in the model load callbacks,
 // as those also don't seem to log errors
 function updateMasks(expressions) {
-  let {eyebrowFrown, eyebrowRaised, mouthSmile} = expressions;
+  let {eyebrowFrown, eyebrowRaised, mouthSmile, mouthOpen} = expressions;
   let delta = clock.getDelta();
   if (masks.druid.loaded && masks.buffalo.loaded) {
     const yEyeBrows = ( eyebrowFrown > eyebrowRaised ) ? -0.2 * eyebrowFrown : 0.7 * eyebrowRaised;
@@ -125,6 +125,8 @@ function updateMasks(expressions) {
     masks.buffalo.mixer.update(delta);
     masks.druid.mixer.update(delta);
 
+    halo.group.scale.set(1, 1 + mouthOpen * 2, 1);
+    // halo.group.position.setY(halo.opts.y - (mouthOpen *2));
     halo.update();
   }
 }

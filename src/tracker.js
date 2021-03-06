@@ -2,9 +2,10 @@ import {JEEFACEFILTERAPI} from 'facefilter';
 import {JeelizThreeHelper, JeelizResizer} from './helpers';
 
 class Tracker {
-  constructor(canvasIds, fns) {
+  constructor(canvasIds, fns, model) {
     this.fns = fns;
     this.canvasIds = canvasIds;
+    this.model = model;
   }
 
   start() {
@@ -25,10 +26,7 @@ class Tracker {
   init(videoSettings) {
     JEEFACEFILTERAPI.init({
       canvasId: this.canvasIds.web,
-
-      // This neural network model has learnt 4 expressions
-      NNCPath: '/assets/NN_4EXPR_0.json',
-
+      NNCPath: this.model,
       maxFacesDetected: 1,
       callbackReady: (errCode, spec) => {
         if (errCode) {

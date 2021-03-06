@@ -177,13 +177,18 @@ function updateMasks(expressions) {
 }
 
 // Start face tracker
+// This neural network model has learnt 4 expressions
+const model = '/assets/neuralnets/NN_4EXPR_0.json';
+// const model = '/assets/neuralnets/NN_DEFAULT.json';
+// const model = '/assets/neuralnets/NN_VERYLIGHT_0.json';
+// const model = '/assets/neuralnets/NN_LIGHT_0.json';
 const tracker = new Tracker({
   web: 'webcam-canvas',
   mask: 'mask-canvas'
 }, {
   setup: setupMasks,
   update: updateMasks
-});
+}, model);
 tracker.start();
 
 // Logger for debugging

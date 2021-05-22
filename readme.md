@@ -23,5 +23,5 @@ Adapted from: <https://superuser.com/questions/411897/using-desktop-as-fake-webc
 
 ## Notes
 
-- If the face tracking is slowing the computer down, can switch to a more lightweight model: <https://github.com/jeeliz/jeelizFaceFilter/#changing-the-neural-network>
-    - Right now I'm using the model that supports expression detection (for eyebrows), but it's really not necessary
+- Currently using the "very light" model to minimize system resource usage.
+    - Other models: <https://github.com/jeeliz/jeelizFaceFilter/#changing-the-neural-network>

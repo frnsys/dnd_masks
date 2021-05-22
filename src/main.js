@@ -144,44 +144,45 @@ function setupMasks(faceObj) {
 // look here, and also look in the model load callbacks,
 // as those also don't seem to log errors
 function updateMasks(expressions) {
-  let {eyebrowFrown, eyebrowRaised, mouthSmile, mouthOpen} = expressions;
   let delta = clock.getDelta();
   if (Object.values(masks).every((m) => m.loaded)) {
     document.getElementById('loading').style.display = 'none';
 
-    const yEyeBrows = ( eyebrowFrown > eyebrowRaised ) ? -0.2 * eyebrowFrown : 0.7 * eyebrowRaised;
-    masks.druid.eyebrows.forEach((mesh) => {
-      mesh.position.setY(2.5 + yEyeBrows * 8);
-    });
-    masks.face.eyebrows.forEach((mesh) => {
-      mesh.position.setY(yEyeBrows * 4);
-    });
-    if (mouthSmile >= 0.001) {
-      masks.druid.eyebrows.slice(0, 2).forEach((mesh) => mesh.visible = false);
-      masks.druid.eyebrows.slice(2).forEach((mesh) => mesh.visible = true);
-      masks.face.smile.forEach((mesh) => mesh.visible = true);
-      masks.face.nonSmile.forEach((mesh) => mesh.visible = false);
-    } else {
-      masks.druid.eyebrows.slice(0, 2).forEach((mesh) => mesh.visible = true);
-      masks.druid.eyebrows.slice(2).forEach((mesh) => mesh.visible = false);
-      masks.face.smile.forEach((mesh) => mesh.visible = false);
-      masks.face.nonSmile.forEach((mesh) => mesh.visible = true);
-    }
-
     Object.values(masks).forEach((m) => m.mixer.update(delta));
 
-    halo.group.scale.set(1, 1 + mouthOpen * 2, 1);
-    halo.group.position.setY(halo.opts.y - mouthOpen);
-    halo.update();
+    if (expressions) {
+      let {eyebrowFrown, eyebrowRaised, mouthSmile, mouthOpen} = expressions;
+      const yEyeBrows = ( eyebrowFrown > eyebrowRaised ) ? -0.2 * eyebrowFrown : 0.7 * eyebrowRaised;
+      masks.druid.eyebrows.forEach((mesh) => {
+        mesh.position.setY(2.5 + yEyeBrows * 8);
+      });
+      masks.face.eyebrows.forEach((mesh) => {
+        mesh.position.setY(yEyeBrows * 4);
+      });
+      if (mouthSmile >= 0.001) {
+        masks.druid.eyebrows.slice(0, 2).forEach((mesh) => mesh.visible = false);
+        masks.druid.eyebrows.slice(2).forEach((mesh) => mesh.visible = true);
+        masks.face.smile.forEach((mesh) => mesh.visible = true);
+        masks.face.nonSmile.forEach((mesh) => mesh.visible = false);
+      } else {
+        masks.druid.eyebrows.slice(0, 2).forEach((mesh) => mesh.visible = true);
+        masks.druid.eyebrows.slice(2).forEach((mesh) => mesh.visible = false);
+        masks.face.smile.forEach((mesh) => mesh.visible = false);
+        masks.face.nonSmile.forEach((mesh) => mesh.visible = true);
+      }
+
+      halo.group.scale.set(1, 1 + mouthOpen * 2, 1);
+      halo.group.position.setY(halo.opts.y - mouthOpen);
+      halo.update();
+    }
   }
 }
 
 // Start face tracker
-// This neural network model has learnt 4 expressions
-const model = '/assets/neuralnets/NN_4EXPR_0.json';
-// const model = '/assets/neuralnets/NN_DEFAULT.json';
-// const model = '/assets/neuralnets/NN_VERYLIGHT_0.json';
-// const model = '/assets/neuralnets/NN_LIGHT_0.json';
+// This neural network model has learnt 4 expressions, but is heavier
+// const model = '/assets/neuralnets/NN_4EXPR_0.json';
+// Using the lightest one to reduce CPU usage
+const model = '/assets/neuralnets/NN_VERYLIGHT_0.json';
 const tracker = new Tracker({
   web: 'webcam-canvas',
   mask: 'mask-canvas'
@@ -200,6 +201,10 @@ const bindings = {
   'd': () => {
     let webcamCanvas = document.getElementById('webcam-canvas');
     webcamCanvas.style.display = webcamCanvas.style.display == 'none' ? 'block' : 'none';
+  },
+  'h': () => {
+    let maskCanvas = document.getElementById('mask-canvas');
+    maskCanvas.style.display = maskCanvas.style.display == 'none' ? 'block' : 'none';
   },
   'f': () => {
     document.body.requestFullscreen();
@@ -238,7 +243,7 @@ document.addEventListener('keydown', (ev) => {
 const volumeIndicator = document.getElementById('volume-indicator');
 detectAudio((vol) => {
   if (tracker.faceObj) {
-    let scale = 1 + (vol * 2);
+    let scale = 1.5 + (vol * 2);
     tracker.faceObj.scale.set(scale, scale, scale);
   }
   volumeIndicator.style.height = `${vol * 100}vh`;

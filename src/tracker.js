@@ -6,6 +6,9 @@ class Tracker {
     this.fns = fns;
     this.canvasIds = canvasIds;
     this.model = model;
+
+    // Check if using the 4 expression model
+    this.usingExpressions = this.model.includes('4EXPR');
   }
 
   start() {
@@ -39,18 +42,22 @@ class Tracker {
 
       // called at each render iteration (drawing loop):
       callbackTrack: (detectState) => {
-        const expr = detectState.expressions;
-        const mouthOpen = expr[0];
-        const mouthSmile = expr[1];
-        const eyebrowFrown = expr[2];
-        const eyebrowRaised = expr[3];
+        if (this.usingExpressions) {
+          const expr = detectState.expressions;
+          const mouthOpen = expr[0];
+          const mouthSmile = expr[1];
+          const eyebrowFrown = expr[2];
+          const eyebrowRaised = expr[3];
 
-        this.fns.update({
-          mouthOpen,
-          mouthSmile,
-          eyebrowFrown,
-          eyebrowRaised
-        });
+          this.fns.update({
+            mouthOpen,
+            mouthSmile,
+            eyebrowFrown,
+            eyebrowRaised
+          });
+        } else {
+          this.fns.update();
+        }
         JeelizThreeHelper.render(detectState, this.threeCamera);
       }
     });
